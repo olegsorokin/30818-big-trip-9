@@ -16,13 +16,21 @@ const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
 
-render(tripInfoContainer, createTripInfoTemplate(), `afterbegin`);
-render(tripControls.firstElementChild, createTripControlsMenuTemplate(), `afterend`);
-render(tripControls, createTripControlsFiltersTemplate(), `beforeend`);
-render(tripEvents, createTripEventsSortTemplate(), `beforeend`);
-render(tripEvents, createTripEventEditTemplate(), `beforeend`);
-render(tripEvents, createTripEventsListTemplate(), `beforeend`);
+const renderContent = () => {
+  render(tripInfoContainer, createTripInfoTemplate(), `afterbegin`);
+  render(tripControls.firstElementChild, createTripControlsMenuTemplate(), `afterend`);
+  render(tripControls, createTripControlsFiltersTemplate(), `beforeend`);
 
-const daysList = tripEvents.querySelector(`.trip-days`);
+  let fragment = document.createElement(`template`);
 
-new Array(TRIP_DAYS).fill(``).forEach(() => render(daysList, createTripDayTemplate(), `beforeend`));
+  fragment.innerHTML += createTripEventsSortTemplate();
+  fragment.innerHTML += createTripEventEditTemplate();
+  fragment.innerHTML += createTripEventsListTemplate();
+
+  const daysList = fragment.content.querySelector(`.trip-days`);
+  new Array(TRIP_DAYS).fill(``).forEach(() => render(daysList, createTripDayTemplate(), `beforeend`));
+
+  tripEvents.append(fragment.content);
+};
+
+renderContent();
